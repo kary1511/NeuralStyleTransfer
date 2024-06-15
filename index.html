@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Style Transfer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .upload-container {
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Neural Style Transfer</h1>
+    <div class="upload-container">
+        <label for="contentImage">Content Image (300x400):</label>
+        <input type="file" id="contentImage" accept="image/*">
+    </div>
+    <div class="upload-container">
+        <label for="styleImage">Style Image (300x400):</label>
+        <input type="file" id="styleImage" accept="image/*">
+    </div>
+    <div class="button-container">
+        <button id="submitButton">Submit</button>
+    </div>
+    <div class="preview-container">
+        <h2>Generated Image:</h2>
+        <img id="generatedImage" src="" alt="Generated Image Preview">
+    </div>
+
+    <script>
+        const contentImageInput = document.getElementById('contentImage');
+        const styleImageInput = document.getElementById('styleImage');
+        const submitButton = document.getElementById('submitButton');
+        const generatedImage = document.getElementById('generatedImage');
+
+        submitButton.addEventListener('click', function() {
+            const contentFile = contentImageInput.files[0];
+            const styleFile = styleImageInput.files[0];
+            if (!contentFile || !styleFile) {
+                alert('Please upload both images.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('contentImage', contentFile);
+            formData.append('styleImage', styleFile);
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                generatedImage.src = `generated/${data.generatedImage}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
